@@ -67,14 +67,8 @@ public static class SaveManager
 #endif
 #endif
                 }
-                catch (IOException e)
+                catch
                 {
-                        Debug.LogError(e.Message); // Log the exception message
-                        return default; // Return default value
-                }
-                catch (MessagePackSerializationException e)
-                {
-                        Debug.LogError(e.Message); // Log the exception message
                         return default; // Return default value
                 }
         }
