@@ -41,6 +41,7 @@ Shader "WiSdom/MyFirstShader"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
                 // Model View Projection
                 // Model : Sclaling, Rotation, Translation
                 // View : Camera Position
