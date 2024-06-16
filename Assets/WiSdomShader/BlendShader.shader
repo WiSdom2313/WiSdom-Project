@@ -1,4 +1,4 @@
-Shader "Unlit/BlendShader"
+Shader "Custom/BlendShader"
 {
     Properties
     {

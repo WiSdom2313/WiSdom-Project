@@ -1,4 +1,4 @@
-Shader "WiSdom/TextureSample"
+Shader "Custom/TextureSample"
 {
     Properties
     {

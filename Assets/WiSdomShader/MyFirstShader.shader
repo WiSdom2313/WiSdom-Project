@@ -1,4 +1,4 @@
-Shader "WiSdom/MyFirstShader"
+Shader "Custom/MyFirstShader"
 {
     Properties
     {
