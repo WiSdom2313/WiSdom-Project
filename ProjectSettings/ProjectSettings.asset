@@ -159,7 +159,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.WiSdom.WiSdomToolSuite
-    Standalone: com.WiSdom.WiSdomProject
+    Standalone: com.WiSdom.Tool-Suite
     iPhone: com.Unity-Technologies.com.unity.template.urp-blank
   buildNumber:
     Standalone: 1
