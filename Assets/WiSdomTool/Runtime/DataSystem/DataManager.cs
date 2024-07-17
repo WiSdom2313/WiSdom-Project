@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
-using WiSdom.DesignPattern;
 using WiSdom.SaveSystem.Data;
-using UnityEngine;
+using WiSJoy.DesignPattern;
 
 namespace WiSdom.SaveSystem
 {
@@ -97,7 +96,7 @@ namespace WiSdom.SaveSystem
 		public async UniTask LoadVersionDataData()
 		{
 			Data.VersionData = await SaveManager.LoadData<VersionData>("VersionData");
-			if(Data.VersionData is null)
+			if (Data.VersionData is null)
 			{
 				Data.VersionData = new VersionData();
 			}
@@ -113,7 +112,7 @@ namespace WiSdom.SaveSystem
 		public async UniTask LoadPlayerDataData()
 		{
 			Data.PlayerData = await SaveManager.LoadData<PlayerData>("PlayerData");
-			if(Data.PlayerData is null)
+			if (Data.PlayerData is null)
 			{
 				Data.PlayerData = new PlayerData();
 			}
@@ -129,7 +128,7 @@ namespace WiSdom.SaveSystem
 		public async UniTask LoadDeviceInfoData()
 		{
 			Data.DeviceInfo = await SaveManager.LoadData<DeviceInfo>("DeviceInfo");
-			if(Data.DeviceInfo is null)
+			if (Data.DeviceInfo is null)
 			{
 				Data.DeviceInfo = new DeviceInfo();
 			}
@@ -145,7 +144,7 @@ namespace WiSdom.SaveSystem
 		public async UniTask LoadBasicTypeDataData()
 		{
 			Data.BasicTypeData = await SaveManager.LoadData<BasicTypeData>("BasicTypeData");
-			if(Data.BasicTypeData is null)
+			if (Data.BasicTypeData is null)
 			{
 				Data.BasicTypeData = new BasicTypeData();
 			}

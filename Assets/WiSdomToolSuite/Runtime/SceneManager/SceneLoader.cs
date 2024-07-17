@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using WiSdom.DesignPattern;
+using WiSJoy.DesignPattern;
 
 namespace WiSdom.Core
 {

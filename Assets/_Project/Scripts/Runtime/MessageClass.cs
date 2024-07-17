@@ -1,5 +1,5 @@
 // Example message class implementing the resettable interface
-using WiSdom.DesignPattern;
+using WiSJoy.DesignPattern;
 namespace WiSdom
 {
     public class PlayerInfo : IResettable

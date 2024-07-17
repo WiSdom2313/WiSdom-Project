@@ -4,17 +4,15 @@ using System.Collections.Generic;
 using UnityEngine.Pool;
 using UnityEngine;
 
-namespace WiSdom.DesignPattern
+namespace WiSJoy.DesignPattern
 {
     public class MessageBus
     {
         private static MessageBus _instance;
         public static MessageBus I => _instance ?? (_instance = new MessageBus());
-        private readonly Dictionary<Type, object> _messagePools = new Dictionary<Type, object>();
-        private readonly Dictionary<Type, List<Delegate>> _subscribers = new Dictionary<Type, List<Delegate>>();
-#if UNITY_EDITOR
-        private readonly ConcurrentDictionary<Type, int> _messageCounts = new ConcurrentDictionary<Type, int>();
-#endif
+        private readonly Dictionary<MessageChannel, Dictionary<Type, List<Delegate>>> _channelSubscribers = new();
+        private readonly Dictionary<Type, object> _messagePools = new();
+
         private readonly object _lock = new object();
 
         private MessageBus() { }
@@ -46,17 +44,16 @@ namespace WiSdom.DesignPattern
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="configure"></param>
-        public void Notify<T>(Action<T> configure) where T : class, new()
+        public void Notify<T>(Action<T> configure, params MessageChannel[] channels) where T : class, new()
         {
             var pool = GetPool<T>();
             var message = pool.Get();
             configure?.Invoke(message);
-            Dispatch(message);
+            foreach (var channel in channels)
+            {
+                Dispatch(channel, message);
+            }
             pool.Release(message);
-#if UNITY_EDITOR
-            Debug.Log($"Message published: {typeof(T).Name}");
-            _messageCounts.AddOrUpdate(typeof(T), 1, (type, count) => count + 1);
-#endif
         }
 
         /// <summary>
@@ -64,24 +61,21 @@ namespace WiSdom.DesignPattern
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
-        private void Dispatch<T>(T message)
+        private void Dispatch<T>(MessageChannel channel, T message)
         {
-            var messageType = typeof(T);
-            List<Delegate> subscribersCopy;
-            lock (_lock)
+            if (!_channelSubscribers.TryGetValue(channel, out var subscribersByType))
             {
-                if (_subscribers.TryGetValue(messageType, out var subscribers))
-                {
-                    subscribersCopy = new List<Delegate>(subscribers);
-                }
-                else
-                {
-#if UNITY_EDITOR
-                    Debug.Log($"No subscribers for message type: {messageType.Name}");
-#endif
-                    return;
-                }
+                return; // Không có subscriber nào cho channel này
             }
+
+            var messageType = typeof(T);
+            if (!subscribersByType.TryGetValue(messageType, out var subscribers))
+            {
+                return; // Không có subscriber nào cho loại message này trong channel
+            }
+
+            // Tạo một bản sao của danh sách subscribers để tránh ConcurrentModificationException
+            var subscribersCopy = new List<Delegate>(subscribers);
 
             foreach (Delegate subscriber in subscribersCopy)
             {
@@ -98,25 +92,23 @@ namespace WiSdom.DesignPattern
         /// <typeparam name="T"></typeparam>
         /// <param name="handler"></param>
         /// <returns></returns>
-        public void Subscribe<T>(Action<T> subscriber) where T : class
+        public void Subscribe<T>(Action<T> subscriber, params MessageChannel[] channels) where T : class, new()
         {
-            lock (_lock)
+            foreach (var channel in channels)
             {
-
-                var type = typeof(T);
-                if (!_subscribers.TryGetValue(type, out var list))
+                if (!_channelSubscribers.TryGetValue(channel, out var subscribersByType))
                 {
-                    list = new List<Delegate>();
-                    _subscribers[type] = list;
+                    subscribersByType = new Dictionary<Type, List<Delegate>>();
+                    _channelSubscribers[channel] = subscribersByType;
                 }
-                list.Add(subscriber);
 
-                // #if UNITY_EDITOR
-                //             if (!list.Contains(subscriber)) // Kiểm tra để tránh đăng ký trùng lặp
-                //             {
-                //                 Debug.LogError($"Subscriber already exists for message type: {type.Name}");
-                //             }
-                // #endif
+                var messageType = typeof(T);
+                if (!subscribersByType.TryGetValue(messageType, out var subscribers))
+                {
+                    subscribers = new List<Delegate>();
+                    subscribersByType[messageType] = subscribers;
+                }
+                subscribers.Add(subscriber);
             }
         }
 
@@ -125,16 +117,17 @@ namespace WiSdom.DesignPattern
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="handler"></param>
-        public void Unsubscribe<T>(Action<T> subscriber) where T : class
+        public void Unsubscribe<T>(Action<T> subscriber, params MessageChannel[] channels) where T : class, new()
         {
-            lock (_lock)
+            foreach (var channel in channels)
             {
-                var type = typeof(T);
-                if (_subscribers.TryGetValue(type, out var list))
+                if (_channelSubscribers.TryGetValue(channel, out var subscribersByType) &&
+                subscribersByType.TryGetValue(typeof(T), out var subscribers))
                 {
-                    list.Remove(subscriber);
+                    subscribers.Remove(subscriber);
                 }
             }
+
         }
 
         /// <summary>
@@ -142,43 +135,13 @@ namespace WiSdom.DesignPattern
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
-        public void ResetMessage<T>(T message) where T : class
+        public void ResetMessage<T>(T message) where T : class, new()
         {
             if (message is IResettable resettable)
             {
                 resettable.Reset();
             }
         }
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// Get the number of messages published for each message type
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<string, int> GetMessageCounts()
-        {
-            var counts = new Dictionary<string, int>();
-            foreach (var key in _messageCounts.Keys)
-            {
-                counts[key.Name] = _messageCounts[key];
-            }
-            return counts;
-        }
-
-        /// <summary>
-        /// Get the number of subscribers for each message type
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<string, int> GetSubscriberCounts()
-        {
-            var counts = new Dictionary<string, int>();
-            foreach (var key in _subscribers.Keys)
-            {
-                counts[key.Name] = _subscribers[key].Count;
-            }
-            return counts;
-        }
-#endif
     }
     /// <summary>
     /// Interface for resettable objects

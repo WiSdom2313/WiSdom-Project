@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using WiSdom.DesignPattern;
+using WiSJoy.DesignPattern;
 
 public class SceneTransition : SingletonMonoBehaviour<SceneTransition>
 {

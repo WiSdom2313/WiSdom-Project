@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WiSdom.DesignPattern
+namespace WiSJoy.DesignPattern
 {
     public class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {
