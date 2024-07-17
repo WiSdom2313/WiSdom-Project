@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine.Pool;
-using UnityEngine;
 
 namespace WiSJoy.DesignPattern
 {
@@ -82,6 +81,52 @@ namespace WiSJoy.DesignPattern
                 if (subscriber is Action<T> action)
                 {
                     action(message);
+                }
+            }
+        }
+        public async UniTask NotifyAsync<T>(Action<T> configure, int delayMilliseconds = 0, params MessageChannel[] channels) where T : class, new()
+        {
+            var pool = GetPool<T>();
+            var message = pool.Get();
+            configure?.Invoke(message);
+            if (delayMilliseconds > 0)
+            {
+                await UniTask.Delay(delayMilliseconds); // Trì hoãn bằng UniTask.Delay
+            }
+            // Tạo một mảng các UniTask để lưu trữ kết quả của từng DispatchAsync
+            var dispatchTasks = new UniTask[channels.Length];
+
+            for (int i = 0; i < channels.Length; i++)
+            {
+                dispatchTasks[i] = DispatchAsync(channels[i], message);
+            }
+
+            // Đợi tất cả các DispatchAsync hoàn thành
+            await UniTask.WhenAll(dispatchTasks);
+
+            pool.Release(message); // Chỉ release message sau khi tất cả đã hoàn thành
+        }
+
+        private async UniTask DispatchAsync<T>(MessageChannel channel, T message)
+        {
+            if (!_channelSubscribers.TryGetValue(channel, out var subscribersByType))
+            {
+                return; // Không có subscriber nào cho channel này
+            }
+
+            var messageType = typeof(T);
+            if (!subscribersByType.TryGetValue(messageType, out var subscribers))
+            {
+                return; // Không có subscriber nào cho loại message này trong channel
+            }
+
+            var subscribersCopy = new List<Delegate>(subscribers);
+
+            foreach (Delegate subscriber in subscribersCopy)
+            {
+                if (subscriber is Action<T> action)
+                {
+                    await UniTask.RunOnThreadPool(() => action(message)); // Sử dụng UniTask.RunOnThreadPool
                 }
             }
         }

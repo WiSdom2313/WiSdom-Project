@@ -1,6 +1,6 @@
 {
     "name": "WiSdom.Editor",
-    "rootNamespace": "WiSdom",
+    "rootNamespace": "WiSJoy",
     "references": [
         "GUID:7ba3e488915953b4e83865b21d2b2583"
     ],
