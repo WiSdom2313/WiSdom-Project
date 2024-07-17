@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class WiSdomTool
+public class WiSJoyTool
 {
-    [MenuItem("WiSdom/Folder/Open Data")]
+    [MenuItem("WiSJoy/Folder/Open Data")]
     public static void OpenDataFolder()
     {
         string path = Application.persistentDataPath + "/";

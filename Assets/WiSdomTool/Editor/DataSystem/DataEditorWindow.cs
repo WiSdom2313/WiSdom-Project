@@ -16,7 +16,7 @@ public class DataEditorWindow : EditorWindow
     private SerializedProperty _sp;
     private bool _saveinbyte = false;
     private Vector2 scrollPosition;
-    [MenuItem("WiSdom/Data Editor")]
+    [MenuItem("WiSJoy/Data Editor")]
     public static void ShowWindow()
     {
         var window = GetWindow<DataEditorWindow>("Data Editor");

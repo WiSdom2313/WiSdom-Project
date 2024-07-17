@@ -9,7 +9,7 @@ public class ProjectManager : EditorWindow
     private VisualTreeAsset m_VisualTreeAsset = default;
     private string m_ProjectName = "_Project";
 
-    [MenuItem("WiSdom/ProjectManager")]
+    [MenuItem("WiSJoy/ProjectManager")]
     public static void ShowExample()
     {
         ProjectManager wnd = GetWindow<ProjectManager>();

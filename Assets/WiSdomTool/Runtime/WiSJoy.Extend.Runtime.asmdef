@@ -1,6 +1,6 @@
 {
-    "name": "WiSdom.Extend.Runtime",
-    "rootNamespace": "WiSdom",
+    "name": "WiSJoy.Extend.Runtime",
+    "rootNamespace": "WiSJoy",
     "references": [
         "GUID:7ba3e488915953b4e83865b21d2b2583",
         "GUID:f51ebe6a0ceec4240a699833d6309b23",

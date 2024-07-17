@@ -9,7 +9,7 @@ public class PluginManagerEditor : EditorWindow
     private bool checkDuplicate = false;
     private string message = "Loading...";
 
-    [MenuItem("WiSdom/Plugin Manager", priority = 0)]
+    [MenuItem("WiSJoy/Plugin Manager", priority = 0)]
     public static void ShowWindow()
     {
         var window = GetWindow<PluginManagerEditor>("Plugin Manager");
@@ -20,7 +20,7 @@ public class PluginManagerEditor : EditorWindow
 
     void OnEnable()
     {
-        pluginConfig = AssetDatabase.LoadAssetAtPath<PluginConfig>("Assets/WiSdomToolSuite/Editor/PluginManager/PluginConfig.asset");
+        pluginConfig = AssetDatabase.LoadAssetAtPath<PluginConfig>("Assets/WiSJoyToolSuite/Editor/PluginManager/PluginConfig.asset");
         foreach (var plugin in pluginConfig.plugins)
         {
             plugin.ChangeDefineSymbol();

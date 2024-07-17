@@ -1,6 +1,6 @@
 {
-    "name": "WiSdom.Extend.Editor",
-    "rootNamespace": "WiSdom",
+    "name": "WiSJoy.Extend.Editor",
+    "rootNamespace": "WiSJoy",
     "references": [
         "GUID:e25605b5339d96e4ea450796634d48ed",
         "GUID:7ba3e488915953b4e83865b21d2b2583",
